@@ -1,7 +1,7 @@
-import { Component, inject } from '@angular/core';
+import { AuthService } from './../services/auth.service';
+import { Component, inject, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -10,14 +10,16 @@ import { AuthService } from '../services/auth.service';
   templateUrl: './login.html',
   styleUrls: ['./login.css'],  // plural here
 })
-export class Login {
+export class Login implements OnInit {
   email: string = '';
   password: string = '';
   errorMessage: string = '';
 
-  router = inject(Router);
-  authService = inject(AuthService);
-
+  constructor(private router: Router, private authService:AuthService) { }
+  ngOnInit() {
+    const result = this.authService.isLoggedIn();
+    console.log('isLoggedIn returned:', result);
+  }
 
   onLogin(): void {
     if (!this.email || !this.password) {
@@ -36,4 +38,5 @@ export class Login {
       }
     });
   }
+
 }

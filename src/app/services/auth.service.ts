@@ -1,11 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
-import { jwtDecode } from 'jwt-decode';
 
 interface JwtPayload {
   sub: string;
-  role?: string | string[];
   exp: number;
 }
 
@@ -15,10 +13,10 @@ interface JwtPayload {
 export class AuthService {
   private loginApiUrl = 'https://localhost:7118/api/Login';
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {console.log(this.isLoggedIn());}
 
-  login(username: string, password: string): Observable<any> {
-    return this.http.post(`${this.loginApiUrl}/login`, { username, password }).pipe(
+  login(email: string, password: string): Observable<any> {
+    return this.http.post(`${this.loginApiUrl}/login`, { email, password }).pipe(
       tap((res: any) => {
         if (res.token) {
           localStorage.setItem('authToken', res.token);
@@ -26,17 +24,8 @@ export class AuthService {
       })
     );
   }
-  getUserDetails(): any {
-    const token = this.getToken();
-    if (!token) return null;
-    try {
-      return jwtDecode<any>(token);
-    } catch (error) {
-      console.error('Invalid token', error);
-      return null;
-    }
-  }
-  logout() {
+
+  logout(): void {
     localStorage.removeItem('authToken');
   }
 
@@ -44,18 +33,31 @@ export class AuthService {
     return localStorage.getItem('authToken');
   }
 
-  // getUserRoles(): string[] {
-  //   const token = this.getToken();
-  //   if (!token) return [];
-  //   const decoded = jwtDecode<JwtPayload>(token);
-  //   if (Array.isArray(decoded.role)) return decoded.role;
-  //   return decoded.role ? [decoded.role] : [];
-  // }
-
   isLoggedIn(): boolean {
     const token = this.getToken();
     if (!token) return false;
-    const decoded = jwtDecode<JwtPayload>(token);
-    return decoded.exp * 1000 > Date.now();
+
+    const payload = this.decodeJwtPayload<JwtPayload>(token);
+    if (!payload || !payload.exp) return false;
+
+    return payload.exp * 1000 > Date.now();
+  }
+
+  private decodeJwtPayload<T = any>(token: string): T | null {
+    try {
+      const parts = token.split('.');
+      if (parts.length !== 3) throw new Error('Invalid JWT');
+
+      let base64 = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+      while (base64.length % 4 !== 0) {
+        base64 += '=';
+      }
+
+      const decoded = atob(base64);
+      return JSON.parse(decoded);
+    } catch (e) {
+      console.error('JWT decode error:', e);
+      return null;
+    }
   }
 }
