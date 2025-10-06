@@ -9,7 +9,7 @@ export interface ApiResponse<T> {
 export interface StoreItem {
   id: number;
   storeName: string;
-  description: string; // ✅ description should be string, not number
+  description: string; 
   createdAt: Date;
   updatedAt: Date;
   isActive: boolean;

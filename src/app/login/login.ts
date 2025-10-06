@@ -17,7 +17,7 @@ export class Login implements OnInit {
 
   constructor(private router: Router, private authService:AuthService) { }
   ngOnInit() {
-    const result = this.authService.isLoggedIn();
+    const result = this.authService.getUser();
     console.log('isLoggedIn returned:', result);
   }
 
