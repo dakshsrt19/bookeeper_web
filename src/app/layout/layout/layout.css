@@ -1,32 +1,60 @@
-/* Reset margin and padding for these elements and make them full height */
-html, body, #top {
+
+/* Reset margin and padding, make full height */
+html, body {
   height: 100%;
   margin: 0;
   padding: 0;
 }
 
-/* Main container with flex layout filling viewport height */
+/* Top-level container with full height */
+#top {
+  height: 100%;
+}
+
+/* Flex layout for main area */
 .main {
   display: flex;
-  height: 100vh; /* fill viewport height */
+  height: 100vh;
   overflow: hidden;
 }
 
-/* Sidebar element styling */
+/* Sidebar styles */
 app-sidebar {
-  min-width: 55px;
-  max-width: 250px;
+  width: 250px;
   flex-shrink: 0;
-  flex-basis: 250px; /* default expanded width */
+  transition: width 0.3s ease;
 }
 
-/* Main content area takes remaining space */
-router-outlet {
-  flex-grow: 1;
-  display: block;
-}
-
-/* When main container has 'collapsed' class, shrink sidebar */
+/* Collapsed sidebar */
 .main.collapsed app-sidebar {
-  flex-basis: 55px;
+  width: 55px;
+}
+
+/* Content wrapper for router-outlet */
+.main-content {
+  flex-grow: 1;
+  overflow: auto;
+  padding: 1rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .main {
+    flex-direction: column;
+  }
+
+  app-sidebar {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+  }
+
+  .main.collapsed app-sidebar {
+    width: 100%;
+  }
+
+  .main-content {
+    flex-grow: 1;
+    padding: 0.5rem;
+  }
 }

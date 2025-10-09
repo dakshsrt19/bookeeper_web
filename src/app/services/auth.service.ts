@@ -67,4 +67,11 @@ export class AuthService {
     localStorage.removeItem('user');
     this.userSubject.next(null);
   }
+
+  isLoggedIn(): boolean {
+    const token = this.getToken();
+    if (!token) return false;
+    const decoded = jwtDecode<JwtPayload>(token);
+    return decoded.exp * 1000 > Date.now();
+  }
 }

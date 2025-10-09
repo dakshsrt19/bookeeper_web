@@ -1,8 +1,8 @@
 import { Component, EventEmitter, OnInit, Output} from '@angular/core';
-import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import jwt_decode from 'jwt-decode';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -13,11 +13,13 @@ import jwt_decode from 'jwt-decode';
 export class Sidebar implements OnInit{
 isSidebarCollapsed = false;
 user: any;
-loggedIn: boolean = false;
+
+loggedIn: boolean = true;
 
   @Output() toggle = new EventEmitter<boolean>();
 
   constructor(private authService: AuthService, private router: Router) {}
+
 
   toggleSidebar() {
     this.isSidebarCollapsed = !this.isSidebarCollapsed;
@@ -32,7 +34,11 @@ loggedIn: boolean = false;
       console.log('Welcome,', user.name);
     }
   });
+
+  this.loggedIn = this.authService.isLoggedIn();
+
   }
+
   logout(): void {
     // Clear localStorage/sessionStorage
     localStorage.removeItem("token");

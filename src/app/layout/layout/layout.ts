@@ -12,8 +12,16 @@ import { Footer } from "../footer/footer";
 })
 export class Layout {
   isSidebarCollapsed = false;
+  sidebarInitialized = false;
 
-  onToggleSidebar(collapsed: boolean) {
+  onSidebarToggle(collapsed: boolean) {
     this.isSidebarCollapsed = collapsed;
   }
+
+  ngOnInit() {
+  // Simulate async or initial logic
+  setTimeout(() => {
+    this.sidebarInitialized = true;
+  }, 0); // Or fetch data, etc.
+}
 }
